@@ -42,22 +42,28 @@ def parse_timestring(filename):
     return time
 
 
-def add_text(file, pos):
+def add_text(file, fontscale, thickness):
     # Parse time string from filename
     timestring = parse_timestring(file)
     # Load image
-    out_img = cv2.imread(file)
+    img = cv2.imread(file)
+    # get image dimensions
+    height, width, channels = img.shape
+    # set coordinate position for text on image
+    x = int(width / 4)  # reasonable first guess, but this will likely need tuning
+    y = 100
+    position = (x, y)
 
     # Add the time string to the image
-    display_text(out_img, timestring, pos, fontScale + 3, thickness + 7)
+    display_text(img, timestring, position, fontscale, thickness)
     # Display the image
     # cv2.imshow('out', out_img)
 
     # Save the image
     out_name = "output/{}.png".format(timestring)
-    cv2.imwrite(out_name, out_img)
+    cv2.imwrite(out_name, img)
     cv2.waitKey(0)
-    print("Writing image file:".format(out_name))
+    print("Writing image file: {}".format(out_name))
 
 
 def read_png_files(folder):
@@ -74,12 +80,10 @@ if __name__ == "__main__":
     folder = sys.argv[1]
     # read PNG files in specified folder
     files = read_png_files(folder)
-    # coordinate for positioning text on image
-    pos = (100, 300)
     # scale of text font size
-    fontscale = 1
+    fontscale = 3
     # thickness of text font
-    thickness = 10
+    thickness = 7
     # add text to each image
     for x in range(0, len(files)):
-        add_text(files[x], pos, fontscale, thickness)
+        add_text(files[x], fontscale, thickness)
